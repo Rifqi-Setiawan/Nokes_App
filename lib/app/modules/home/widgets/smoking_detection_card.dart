@@ -22,7 +22,6 @@ class SmokingDetectionCard extends GetView<HomeController> {
     );
   }
 
-  /// Membangun dekorasi card
   BoxDecoration _buildCardDecoration() {
     return BoxDecoration(
       color: Colors.white,
@@ -37,17 +36,12 @@ class SmokingDetectionCard extends GetView<HomeController> {
     );
   }
 
-  /// Membangun header dengan judul
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
         children: [
-          const Icon(
-            Icons.smoke_free,
-            color: Colors.red,
-            size: 24,
-          ),
+          const Icon(Icons.smoking_rooms_outlined, color: Colors.red, size: 24),
           const SizedBox(width: 12),
           const Text(
             'Deteksi Aktivitas Merokok',
@@ -64,7 +58,6 @@ class SmokingDetectionCard extends GetView<HomeController> {
     );
   }
 
-  /// Membangun status badge
   Widget _buildStatusBadge() {
     final isDetected = controller.smokingDetected.value;
     return Container(
@@ -101,12 +94,11 @@ class SmokingDetectionCard extends GetView<HomeController> {
     );
   }
 
-  /// Membangun status deteksi utama
   Widget _buildDetectionStatus() {
     return Obx(() {
       final isDetected = controller.smokingDetected.value;
       final confidence = controller.detectionConfidence.value;
-      
+
       return Container(
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         padding: const EdgeInsets.all(16),
@@ -133,9 +125,9 @@ class SmokingDetectionCard extends GetView<HomeController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        isDetected 
-                          ? '⚠️ Aktivitas Merokok Terdeteksi!' 
-                          : '✅ Area Aman dari Asap Rokok',
+                        isDetected
+                            ? '⚠️ Aktivitas Merokok Terdeteksi!'
+                            : '✅ Area Aman dari Asap Rokok',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -145,8 +137,8 @@ class SmokingDetectionCard extends GetView<HomeController> {
                       const SizedBox(height: 4),
                       Text(
                         isDetected
-                          ? 'Deteksi dengan tingkat kepercayaan ${(confidence * 100).toInt()}%'
-                          : 'Monitoring aktif - tidak ada aktivitas merokok',
+                            ? 'Deteksi dengan tingkat kepercayaan ${(confidence * 100).toInt()}%'
+                            : 'Monitoring aktif - tidak ada aktivitas merokok',
                         style: TextStyle(
                           fontSize: 12,
                           color: isDetected ? Colors.red[600] : Colors.green[600],
@@ -157,8 +149,6 @@ class SmokingDetectionCard extends GetView<HomeController> {
                 ),
               ],
             ),
-            
-            // Confidence bar untuk deteksi
             if (isDetected && confidence > 0) ...[
               const SizedBox(height: 12),
               Text(
@@ -183,7 +173,6 @@ class SmokingDetectionCard extends GetView<HomeController> {
     });
   }
 
-  /// Membangun statistik deteksi
   Widget _buildStatistics() {
     return Obx(() => Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -203,11 +192,7 @@ class SmokingDetectionCard extends GetView<HomeController> {
               Colors.blue,
             ),
           ),
-          Container(
-            width: 1,
-            height: 40,
-            color: Colors.grey[300],
-          ),
+          Container(width: 1, height: 40, color: Colors.grey[300]),
           Expanded(
             child: _buildStatItem(
               'Deteksi Terakhir',
@@ -221,7 +206,6 @@ class SmokingDetectionCard extends GetView<HomeController> {
     ));
   }
 
-  /// Membangun item statistik
   Widget _buildStatItem(String label, String value, IconData icon, Color color) {
     return Column(
       children: [
@@ -247,27 +231,8 @@ class SmokingDetectionCard extends GetView<HomeController> {
     );
   }
 
-  /// Format waktu deteksi terakhir
   String _formatLastDetection() {
-    final lastDetection = controller.lastDetectionTime.value;
-    if (lastDetection.isEmpty) return 'Belum ada';
-    
-    try {
-      final dateTime = DateTime.parse(lastDetection);
-      final now = DateTime.now();
-      final difference = now.difference(dateTime);
-      
-      if (difference.inMinutes < 1) {
-        return 'Baru saja';
-      } else if (difference.inHours < 1) {
-        return '${difference.inMinutes}m lalu';
-      } else if (difference.inDays < 1) {
-        return '${difference.inHours}h lalu';
-      } else {
-        return '${difference.inDays}d lalu';
-      }
-    } catch (e) {
-      return 'Unknown';
-    }
+    final value = controller.lastDetectionTime.value;
+    return value.isEmpty ? 'Belum ada' : value;
   }
 }

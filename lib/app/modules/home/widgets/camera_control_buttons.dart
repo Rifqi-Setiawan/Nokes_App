@@ -20,7 +20,7 @@ class CameraControlButtons extends GetView<HomeController> {
     );
   }
 
-  /// Membangun tombol refresh
+  /// Tombol refresh stream kamera
   Widget _buildRefreshButton() {
     return Expanded(
       child: ElevatedButton.icon(
@@ -32,7 +32,7 @@ class CameraControlButtons extends GetView<HomeController> {
     );
   }
 
-  /// Membangun tombol settings/ganti
+  /// Tombol pengaturan kamera
   Widget _buildSettingsButton() {
     return Expanded(
       child: OutlinedButton.icon(
@@ -44,7 +44,6 @@ class CameraControlButtons extends GetView<HomeController> {
     );
   }
 
-  /// Style untuk tombol primary (refresh)
   ButtonStyle _buildPrimaryButtonStyle() {
     return ElevatedButton.styleFrom(
       backgroundColor: Colors.blue,
@@ -56,7 +55,6 @@ class CameraControlButtons extends GetView<HomeController> {
     );
   }
 
-  /// Style untuk tombol secondary (settings)
   ButtonStyle _buildSecondaryButtonStyle() {
     return OutlinedButton.styleFrom(
       foregroundColor: Colors.grey[700],
@@ -68,23 +66,18 @@ class CameraControlButtons extends GetView<HomeController> {
     );
   }
 
-  /// Handler untuk tombol refresh
+  /// Aksi saat tombol refresh ditekan
   void _handleRefreshPressed() {
-    controller.refreshCamera();
+    controller.refreshCamera(); // Pastikan ini mengganti streamUrl
     _showFeedbackSnackbar(
-      'Refresh Camera',
+      'Refresh Kamera',
       'Kamera sedang di-refresh...',
       Colors.blue,
     );
   }
 
-  /// Handler untuk tombol settings
+  /// Aksi saat tombol setting ditekan
   void _handleSettingsPressed() {
-    _showCameraSettingsBottomSheet();
-  }
-
-  /// Menampilkan bottom sheet untuk pengaturan kamera
-  void _showCameraSettingsBottomSheet() {
     Get.bottomSheet(
       _buildCameraSettingsBottomSheet(),
       backgroundColor: Colors.white,
@@ -94,7 +87,7 @@ class CameraControlButtons extends GetView<HomeController> {
     );
   }
 
-  /// Membangun bottom sheet untuk pengaturan kamera
+  /// Bottom sheet pengaturan kamera
   Widget _buildCameraSettingsBottomSheet() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -111,7 +104,6 @@ class CameraControlButtons extends GetView<HomeController> {
     );
   }
 
-  /// Membangun header bottom sheet
   Widget _buildBottomSheetHeader() {
     return Row(
       children: [
@@ -133,33 +125,25 @@ class CameraControlButtons extends GetView<HomeController> {
     );
   }
 
-  /// Membangun opsi pengaturan
   Widget _buildSettingsOptions() {
     return Column(
       children: [
         _buildSettingTile(
-          icon: Icons.flip_camera_ios,
-          title: 'Ganti Kamera',
-          subtitle: 'Ubah ke kamera depan/belakang',
+          icon: Icons.switch_camera,
+          title: 'Pilih Kamera Laptop',
+          subtitle: 'Jika tersedia lebih dari satu webcam',
           onTap: _handleSwitchCamera,
         ),
         _buildSettingTile(
           icon: Icons.high_quality,
           title: 'Kualitas Video',
-          subtitle: 'Ubah resolusi kamera',
+          subtitle: 'Ubah resolusi stream MJPEG',
           onTap: _handleVideoQuality,
-        ),
-        _buildSettingTile(
-          icon: Icons.info_outline,
-          title: 'Info Kamera',
-          subtitle: 'Lihat informasi kamera',
-          onTap: _handleCameraInfo,
         ),
       ],
     );
   }
 
-  /// Membangun tile untuk setting individual
   Widget _buildSettingTile({
     required IconData icon,
     required String title,
@@ -175,74 +159,26 @@ class CameraControlButtons extends GetView<HomeController> {
     );
   }
 
-  /// Handler untuk switch kamera
   void _handleSwitchCamera() {
     Get.back();
-    // TODO: Implement camera switching
+    // TODO: Buat ganti URL stream ke /video?camera=1 jika backend support
     _showFeedbackSnackbar(
-      'Switch Camera',
+      'Ganti Kamera',
       'Fitur ganti kamera akan segera tersedia',
       Colors.orange,
     );
   }
 
-  /// Handler untuk kualitas video
   void _handleVideoQuality() {
     Get.back();
-    // TODO: Implement video quality settings
+    // TODO: Implement jika backend mendukung multiple resolution
     _showFeedbackSnackbar(
-      'Video Quality',
+      'Kualitas Video',
       'Pengaturan kualitas video akan segera tersedia',
       Colors.orange,
     );
   }
 
-  /// Handler untuk info kamera
-  void _handleCameraInfo() {
-    Get.back();
-    _showCameraInfoDialog();
-  }
-
-  /// Menampilkan dialog info kamera
-  void _showCameraInfoDialog() {
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Informasi Kamera'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInfoRow('Status', controller.isCameraInitialized.value ? 'Aktif' : 'Tidak Aktif'),
-            _buildInfoRow('Resolusi', 'Medium (720p)'),
-            _buildInfoRow('FPS', '30'),
-            _buildInfoRow('Audio', 'Disabled'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Tutup'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Membangun baris informasi
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-          Text(value),
-        ],
-      ),
-    );
-  }
-
-  /// Menampilkan snackbar feedback
   void _showFeedbackSnackbar(String title, String message, Color color) {
     Get.snackbar(
       title,

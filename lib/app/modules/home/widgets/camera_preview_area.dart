@@ -1,45 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:flutter_mjpeg/flutter_mjpeg.dart';
+import 'package:get/get.dart';
 
-class CameraPreviewArea extends StatefulWidget {
+class CameraPreviewArea extends StatelessWidget {
   const CameraPreviewArea({super.key});
 
   @override
-  State<CameraPreviewArea> createState() => _CameraPreviewAreaState();
-}
-
-class _CameraPreviewAreaState extends State<CameraPreviewArea> {
-  late VlcPlayerController _vlcViewController;
-
-  @override
-  void initState() {
-    super.initState();
-    _vlcViewController = VlcPlayerController.network(
-      'http://192.168.5.186:5000/video', // IP server kamu
-      hwAcc: HwAcc.auto,
-      autoPlay: true,
-      options: VlcPlayerOptions(),
-    );
-  }
-
-  @override
-  void dispose() {
-    _vlcViewController.stop();
-    _vlcViewController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final streamUrl =
+        'http://192.168.5.186:5000/video'; // Ganti IP sesuai laptop
+
     return Card(
       elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: SizedBox(
         height: 250,
         width: double.infinity,
-        child: VlcPlayer(
-          controller: _vlcViewController,
-          aspectRatio: 640 / 480,
-          placeholder: const Center(child: CircularProgressIndicator()),
+        child: Mjpeg(
+          stream: 'http://192.168.5.186:5000/video',
+          isLive: true,
+          fit: BoxFit.cover,
+          error: (context, error, stack) {
+            print('🛑 MJPEG Stream Error: $error');
+            return const Center(child: Text("Gagal menampilkan kamera"));
+          },
+          loading: (context) {
+            print('⌛ MJPEG Stream Loading...');
+            return const Center(child: CircularProgressIndicator());
+          },
         ),
       ),
     );

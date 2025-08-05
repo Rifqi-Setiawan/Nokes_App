@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class HomeController extends GetxController {
   // Stream-related properties
@@ -141,37 +143,32 @@ class HomeController extends GetxController {
   
   /// Fetch real-time detection status dari YOLOv8 server
   Future<void> _fetchDetectionStatus() async {
-    if (!isStreamActive.value) return;
-    
-    try {
-      // Karena server Python hanya memiliki /video endpoint,
-      // kita simulasikan detection status berdasarkan stream activity
-      // Deteksi akan terlihat langsung di video stream
-      
-      // Simulasi detection untuk UI (bisa dihapus jika tidak diperlukan)
-      final now = DateTime.now();
-      final random = now.millisecond % 100;
-      
-      // Simulasi deteksi smoking secara random (3% chance)
-      if (random < 3) {
+  if (!isStreamActive.value) return;
+
+  try {
+    final response = await http.get(Uri.parse('${streamUrl.value.replaceFirst("/video", "")}/status'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      final detected = data['detected'] ?? false;
+      final confidence = (data['confidence'] ?? 0.0).toDouble();
+
+      if (detected && confidence > 0.7) {
         smokingDetected.value = true;
-        detectionConfidence.value = 0.75 + (random / 100);
+        detectionConfidence.value = confidence;
         totalDetections.value++;
-        lastDetectionTime.value = '${now.hour}:${now.minute.toString().padLeft(2, '0')}';
-        
-        // Show alert jika ada deteksi smoking dengan confidence tinggi
-        if (smokingDetected.value && detectionConfidence.value > 0.7) {
-          _showSmokingAlert();
-        }
+        lastDetectionTime.value = TimeOfDay.now().format(Get.context!);
+        _showSmokingAlert();
       } else {
         smokingDetected.value = false;
         detectionConfidence.value = 0.0;
       }
-    } catch (e) {
-      // Silently handle errors untuk avoid spam
-      print('Detection monitoring error: $e');
     }
+  } catch (e) {
+    print('Error fetching detection status: $e');
   }
+}
+
   
   /// Show smoking detection alert
   void _showSmokingAlert() {
