@@ -338,7 +338,7 @@ class CameraMonitoringCard extends GetView<HomeController> {
                 children: [
                   Text(
                     detected
-                        ? '🚬 Merokok Terdeteksi (${(confidence * 100).toStringAsFixed(1)}%)'
+                        ? '🚬 Merokok Terdeteksi (${(confidence * 100).toStringAsFixed(1)}% akurat)'
                         : '✅ Tidak Terdeteksi Merokok',
                     style: TextStyle(
                       fontSize: 14,

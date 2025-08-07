@@ -137,7 +137,7 @@ class SmokingDetectionCard extends GetView<HomeController> {
                       const SizedBox(height: 4),
                       Text(
                         isDetected
-                            ? 'Deteksi dengan tingkat kepercayaan ${(confidence * 100).toInt()}%'
+                            ? 'Deteksi dengan ketepatan ${(confidence * 100).toInt()}%'
                             : 'Monitoring aktif - tidak ada aktivitas merokok',
                         style: TextStyle(
                           fontSize: 12,
@@ -152,7 +152,7 @@ class SmokingDetectionCard extends GetView<HomeController> {
             if (isDetected && confidence > 0) ...[
               const SizedBox(height: 12),
               Text(
-                'Tingkat Kepercayaan: ${(confidence * 100).toInt()}%',
+                'Akurasi Deteksi: ${(confidence * 100).toInt()}%',
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,

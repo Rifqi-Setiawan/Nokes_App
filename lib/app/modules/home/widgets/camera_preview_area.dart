@@ -17,7 +17,7 @@ class CameraPreviewArea extends StatelessWidget {
         height: 250,
         width: double.infinity,
         child: Mjpeg(
-          stream: 'http://192.168.5.186:5000/video',
+          stream: streamUrl,
           isLive: true,
           fit: BoxFit.cover,
           error: (context, error, stack) {

@@ -153,7 +153,7 @@ class HomeController extends GetxController {
       final detected = data['detected'] ?? false;
       final confidence = (data['confidence'] ?? 0.0).toDouble();
 
-      if (detected && confidence > 0.7) {
+      if (detected && confidence > 0.5) {
         smokingDetected.value = true;
         detectionConfidence.value = confidence;
         totalDetections.value++;
@@ -180,7 +180,7 @@ class HomeController extends GetxController {
       
       Get.snackbar(
         '🚭 Deteksi Merokok!',
-        'Confidence: ${(detectionConfidence.value * 100).toInt()}%',
+        'Ketepatan: ${(detectionConfidence.value * 100).toInt()}%',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[800],
