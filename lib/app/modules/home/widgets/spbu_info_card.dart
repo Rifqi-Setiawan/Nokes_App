@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Widget untuk menampilkan informasi SPBU dengan design card bergradient biru.
-/// Menampilkan sambutan, lokasi SPBU, dan status koneksi kamera.
+// Widget displaying SPBU information in a gradient blue card design
+// Shows greeting message, SPBU location, and camera connection status
 class SpbuInfoCard extends StatelessWidget {
   const SpbuInfoCard({super.key});
 
@@ -24,7 +24,7 @@ class SpbuInfoCard extends StatelessWidget {
     );
   }
 
-  /// Membangun dekorasi container dengan gradient dan shadow
+  // Creates container decoration with gradient background and shadow
   BoxDecoration _buildCardDecoration() {
     return BoxDecoration(
       gradient: const LinearGradient(
@@ -46,7 +46,7 @@ class SpbuInfoCard extends StatelessWidget {
     );
   }
 
-  /// Membangun section welcome dengan judul dan subtitle
+  // Builds welcome section with title and subtitle messaging
   Widget _buildWelcomeSection() {
     return const Column(
       children: [
@@ -70,7 +70,7 @@ class SpbuInfoCard extends StatelessWidget {
     );
   }
 
-  /// Membangun container informasi yang berisi lokasi dan status kamera
+  // Creates semi-transparent container for location and camera status information
   Widget _buildInfoContainer() {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -88,7 +88,7 @@ class SpbuInfoCard extends StatelessWidget {
     );
   }
 
-  /// Membangun informasi lokasi SPBU
+  // Displays SPBU location information with location icon
   Widget _buildLocationInfo() {
     return const Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -125,7 +125,7 @@ class SpbuInfoCard extends StatelessWidget {
     );
   }
 
-  /// Membangun status koneksi kamera
+  // Shows camera connection status with visual indicator
   Widget _buildCameraStatus() {
     return const Row(
       children: [
@@ -156,7 +156,7 @@ class SpbuInfoCard extends StatelessWidget {
   }
 }
 
-/// Widget untuk menampilkan indikator status koneksi
+// Private widget for displaying circular connection status indicator
 class _StatusIndicator extends StatelessWidget {
   final bool isConnected;
 

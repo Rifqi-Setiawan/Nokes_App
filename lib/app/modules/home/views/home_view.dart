@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
 import '../widgets/widgets.dart';
 
-/// View utama untuk halaman home yang menampilkan informasi SPBU dan monitoring kamera.
-/// Menggunakan clean architecture dengan pemisahan widget ke file terpisah.
+// Main view component for home page displaying SPBU information and camera monitoring
+// Implements clean architecture with widget separation into dedicated files
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
 
@@ -28,7 +28,7 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  /// Membangun konten utama dengan padding
+  // Constructs scrollable main content area with proper spacing
   Widget _buildMainContent() {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -38,7 +38,7 @@ class HomeView extends GetView<HomeController> {
           SizedBox(height: 20),
           SmokingDetectionCard(),
           SizedBox(height: 20),
-          // Ruang untuk widget tambahan di masa depan
+          // Reserved space for future widget additions
         ],
       ),
     );

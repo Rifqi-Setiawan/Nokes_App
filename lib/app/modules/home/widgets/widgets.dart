@@ -1,5 +1,5 @@
-// Home Widgets Barrel File
-// Mengexport semua widget yang digunakan di home module
+// Barrel file for home module widgets providing centralized imports
+// Exports all widget components used in the home module for clean architecture
 
 export 'spbu_info_card.dart';
 export 'camera_preview_area.dart';

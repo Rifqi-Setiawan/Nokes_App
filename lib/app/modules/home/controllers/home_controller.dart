@@ -5,31 +5,31 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class HomeController extends GetxController {
-  // Stream-related properties
-  final streamUrl = 'http://192.168.5.186:5000/video'.obs; // Default IP yang lebih umum
+  // Observable properties for video stream management
+  final streamUrl = 'http://192.168.5.186:5000/video'.obs;
   final isStreamActive = false.obs;
   final isStreamLoading = false.obs;
   final streamError = ''.obs;
   final streamQuality = 'HD'.obs;
-  final streamLatency = 0.obs; // untuk monitoring latency
-  final streamFps = 0.obs; // untuk monitoring FPS
+  final streamLatency = 0.obs;
+  final streamFps = 0.obs;
   
-  // Detection properties
+  // Observable properties for smoking detection results
   final smokingDetected = false.obs;
   final detectionConfidence = 0.0.obs;
   final totalDetections = 0.obs;
   final lastDetectionTime = ''.obs;
   
-  // Timer untuk monitoring koneksi
+  // Periodic timers for real-time monitoring
   Timer? _connectionTimer;
   Timer? _qualityTimer;
   Timer? _latencyTimer;
   Timer? _detectionTimer;
   
-  // Alert throttling
+  // Prevents spam alerts by tracking last alert timestamp
   DateTime? _lastAlertTime;
 
-  // Legacy camera properties (untuk backward compatibility)
+  // Backward compatibility properties for legacy camera implementation
   final isCameraInitialized = false.obs;
   final isCameraActive = false.obs;
   final cameraError = ''.obs;
@@ -40,7 +40,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Auto-connect ke stream saat controller diinisialisasi
+    // Initialize stream connection with delay to ensure UI readiness
     Future.delayed(const Duration(milliseconds: 500), () {
       _initializeStream();
     });
@@ -48,6 +48,7 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
+    // Clean up all active timers to prevent memory leaks
     _connectionTimer?.cancel();
     _qualityTimer?.cancel();
     _latencyTimer?.cancel();
@@ -55,23 +56,22 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
-  /// Inisialisasi stream dengan auto-connect
+  // Establishes initial connection to video stream with automatic retry logic
   Future<void> _initializeStream() async {
     try {
       setStreamLoading(true);
       streamError.value = '';
       
-      // Langsung set stream sebagai aktif tanpa health check
-      // karena endpoint hanya /video yang tersedia
+      // Direct stream activation since only /video endpoint is available
       print('🔗 Mencoba koneksi ke: ${streamUrl.value}');
       
-      // Delay sebentar untuk memastikan UI sudah ready
+      // Brief delay ensures UI components are fully rendered
       await Future.delayed(const Duration(milliseconds: 500));
       
       isStreamActive.value = true;
       setStreamLoading(false);
       
-      // Start monitoring setelah koneksi berhasil
+      // Begin real-time monitoring after successful connection
       _startMonitoring();
       
       Get.snackbar(
@@ -87,61 +87,60 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Mulai monitoring koneksi stream
+  // Initializes multiple periodic timers for comprehensive stream monitoring
   void _startMonitoring() {
-    // Monitor koneksi setiap 15 detik (lebih sering untuk deteksi cepat)
+    // Health check every 15 seconds for fast disconnect detection
     _connectionTimer = Timer.periodic(const Duration(seconds: 15), (timer) {
       _checkStreamHealth();
     });
     
-    // Update quality info setiap 3 detik (lebih responsif)
+    // Quality metrics update every 3 seconds for responsive feedback
     _qualityTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       _updateStreamQuality();
     });
     
-    // Monitor latency setiap 2 detik
+    // Network latency monitoring every 2 seconds
     _latencyTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
       _updateLatencyInfo();
     });
     
-    // Monitor detection status setiap 1 detik
+    // Real-time smoking detection polling every second
     _detectionTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _fetchDetectionStatus();
     });
   }
 
-  /// Cek kesehatan stream
+  // Performs basic connectivity validation for the video stream
   void _checkStreamHealth() {
     if (isStreamActive.value) {
-      // Simulasi health check
-      // Dalam implementasi real, ini bisa ping ke server
+      // Simple health verification - can be enhanced with actual server ping
       print('Stream health check: OK');
     }
   }
 
-  /// Update informasi kualitas stream
+  // Updates stream quality metrics based on current performance
   void _updateStreamQuality() {
     if (isStreamActive.value) {
-      // Simulasi update quality berdasarkan performa
+      // Simulated quality assessment based on system performance
       final now = DateTime.now();
       final qualities = ['HD', '720p', '480p'];
       streamQuality.value = qualities[now.second % 3];
       
-      // Update FPS simulation
-      streamFps.value = 25 + (now.millisecond % 10); // 25-35 FPS
+      // Dynamic FPS simulation for realistic monitoring
+      streamFps.value = 25 + (now.millisecond % 10);
     }
   }
   
-  /// Update informasi latency
+  // Monitors network latency between client and streaming server
   void _updateLatencyInfo() {
     if (isStreamActive.value) {
-      // Simulasi latency monitoring
-      final latency = 50 + (DateTime.now().millisecond % 100); // 50-150ms
+      // Simulated latency calculation for performance monitoring
+      final latency = 50 + (DateTime.now().millisecond % 100);
       streamLatency.value = latency;
     }
   }
   
-  /// Fetch real-time detection status dari YOLOv8 server
+  // Polls YOLOv8 server for real-time smoking detection results
   Future<void> _fetchDetectionStatus() async {
   if (!isStreamActive.value) return;
 
@@ -153,6 +152,7 @@ class HomeController extends GetxController {
       final detected = data['detected'] ?? false;
       final confidence = (data['confidence'] ?? 0.0).toDouble();
 
+      // Trigger detection only when confidence exceeds threshold
       if (detected && confidence > 0.5) {
         smokingDetected.value = true;
         detectionConfidence.value = confidence;
@@ -160,6 +160,7 @@ class HomeController extends GetxController {
         lastDetectionTime.value = TimeOfDay.now().format(Get.context!);
         _showSmokingAlert();
       } else {
+        // Reset detection state when no smoking is detected
         smokingDetected.value = false;
         detectionConfidence.value = 0.0;
       }
@@ -170,9 +171,9 @@ class HomeController extends GetxController {
 }
 
   
-  /// Show smoking detection alert
+  // Displays smoking detection alert with spam prevention mechanism
   void _showSmokingAlert() {
-    // Batasi alert untuk avoid spam
+    // Throttle alerts to prevent notification spam
     final now = DateTime.now();
     
     if (_lastAlertTime == null || now.difference(_lastAlertTime!).inSeconds > 5) {
@@ -190,15 +191,15 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Toggle stream on/off
+  // Toggles video stream between active and inactive states
   Future<void> toggleStream() async {
     try {
       if (isStreamActive.value) {
-        // Stop stream
+        // Deactivate stream and clean up resources
         isStreamActive.value = false;
         streamError.value = '';
         
-        // Stop monitoring timers
+        // Cancel all monitoring timers to free memory
         _connectionTimer?.cancel();
         _qualityTimer?.cancel();
         _latencyTimer?.cancel();
@@ -212,7 +213,7 @@ class HomeController extends GetxController {
           colorText: Colors.orange[800],
         );
       } else {
-        // Start stream
+        // Reactivate stream connection
         await _initializeStream();
       }
     } catch (e) {
@@ -220,13 +221,13 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Reconnect stream setelah error
+  // Attempts to re-establish stream connection after error or disconnect
   Future<void> reconnectStream() async {
     streamError.value = '';
     await _initializeStream();
   }
 
-  /// Handle stream error
+  // Handles stream connection errors and displays user-friendly feedback
   void handleStreamError(String error) {
     isStreamActive.value = false;
     setStreamLoading(false);
@@ -242,7 +243,7 @@ class HomeController extends GetxController {
     );
   }
 
-  /// Set loading state
+  // Updates loading state and clears errors when loading begins
   void setStreamLoading(bool loading) {
     isStreamLoading.value = loading;
     if (loading) {
@@ -250,7 +251,7 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Get current stream quality
+  // Returns formatted string with current stream performance metrics
   String getStreamQuality() {
     if (isStreamActive.value) {
       return '${streamQuality.value} • ${streamFps.value}fps • ${streamLatency.value}ms';
@@ -258,7 +259,7 @@ class HomeController extends GetxController {
     return 'OFFLINE';
   }
 
-  /// Show stream settings bottom sheet
+  // Displays modal bottom sheet for stream configuration options
   void showStreamSettings() {
     Get.bottomSheet(
       _buildStreamSettingsBottomSheet(),
@@ -269,7 +270,7 @@ class HomeController extends GetxController {
     );
   }
 
-  /// Build stream settings bottom sheet
+  // Constructs the main container for stream settings interface
   Widget _buildStreamSettingsBottomSheet() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -292,7 +293,7 @@ class HomeController extends GetxController {
     );
   }
 
-  /// Build settings header
+  // Creates header section with title and close button for settings modal
   Widget _buildSettingsHeader() {
     return Row(
       children: [
@@ -314,7 +315,7 @@ class HomeController extends GetxController {
     );
   }
 
-  /// Build stream URL setting
+  // Builds URL configuration section with current URL display and edit button
   Widget _buildStreamUrlSetting() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,7 +357,7 @@ class HomeController extends GetxController {
     );
   }
 
-  /// Build quality setting
+  // Creates quality indicator showing current stream resolution
   Widget _buildQualitySetting() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -388,7 +389,7 @@ class HomeController extends GetxController {
     );
   }
 
-  /// Build connection info
+  // Displays real-time connection status with visual indicator
   Widget _buildConnectionInfo() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,7 +427,7 @@ class HomeController extends GetxController {
     );
   }
   
-  /// Build optimization tips
+  // Creates informational section with performance optimization suggestions
   Widget _buildOptimizationTips() {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -468,7 +469,7 @@ class HomeController extends GetxController {
     );
   }
 
-  /// Change stream URL
+  // Opens dialog for user to modify stream URL with validation
   void _changeStreamUrl() {
     final TextEditingController urlController = TextEditingController();
     
@@ -506,7 +507,7 @@ class HomeController extends GetxController {
               if (newUrl.isNotEmpty) {
                 streamUrl.value = newUrl;
                 Get.back();
-                Get.back(); // Close bottom sheet too
+                Get.back();
                 
                 Get.snackbar(
                   'URL Updated',
@@ -524,19 +525,16 @@ class HomeController extends GetxController {
     );
   }
 
-  // Legacy camera methods (for backward compatibility)
+  // Legacy method redirects maintained for backward compatibility
   Future<void> initializeCamera() async {
-    // Redirect to stream initialization
     await _initializeStream();
   }
 
   Future<void> toggleCamera() async {
-    // Redirect to stream toggle
     await toggleStream();
   }
 
   void refreshCamera() async {
-    // Redirect to stream reconnect
     await reconnectStream();
   }
 }

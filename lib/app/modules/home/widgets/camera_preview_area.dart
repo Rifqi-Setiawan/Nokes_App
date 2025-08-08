@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mjpeg/flutter_mjpeg.dart';
-import 'package:get/get.dart';
 
 class CameraPreviewArea extends StatelessWidget {
   const CameraPreviewArea({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final streamUrl =
-        'http://192.168.5.186:5000/video'; // Ganti IP sesuai laptop
+    // Static stream URL configuration - should be replaced with dynamic controller value
+    final streamUrl = 'http://192.168.5.186:5000/video';
 
     return Card(
       elevation: 4,

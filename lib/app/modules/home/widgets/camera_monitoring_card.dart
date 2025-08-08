@@ -23,6 +23,7 @@ class CameraMonitoringCard extends GetView<HomeController> {
     );
   }
 
+  // Creates elevated card design with shadow and rounded corners
   BoxDecoration _buildCardDecoration() {
     return BoxDecoration(
       color: Colors.white,
@@ -37,6 +38,7 @@ class CameraMonitoringCard extends GetView<HomeController> {
     );
   }
 
+  // Builds card header with title and quality indicator
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -96,6 +98,7 @@ class CameraMonitoringCard extends GetView<HomeController> {
     );
   }
 
+  // Creates container for video stream with black background and rounded borders
   Widget _buildVideoStreamContainer() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -112,6 +115,7 @@ class CameraMonitoringCard extends GetView<HomeController> {
     );
   }
 
+  // Routes to appropriate video content based on current stream state
   Widget _buildVideoContent() {
     if (controller.streamError.value.isNotEmpty) {
       return _buildErrorState();
@@ -122,6 +126,7 @@ class CameraMonitoringCard extends GetView<HomeController> {
     }
   }
 
+  // Displays error state with reconnection option when stream fails
   Widget _buildErrorState() {
     return Container(
       color: Colors.grey[100],
@@ -163,6 +168,7 @@ class CameraMonitoringCard extends GetView<HomeController> {
     );
   }
 
+  // Shows loading indicator while establishing stream connection
   Widget _buildLoadingState() {
     return Container(
       color: Colors.grey[100],
@@ -180,6 +186,7 @@ class CameraMonitoringCard extends GetView<HomeController> {
     );
   }
 
+  // Renders live MJPEG video stream with error handling
   Widget _buildVideoStream() {
     return Stack(
       children: [
@@ -254,6 +261,7 @@ class CameraMonitoringCard extends GetView<HomeController> {
     );
   }
 
+  // Provides control buttons for stream start/stop and settings access
   Widget _buildControlButtons() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -296,6 +304,7 @@ class CameraMonitoringCard extends GetView<HomeController> {
     );
   }
 
+  // Displays current smoking detection status with visual feedback
   Widget _buildDetectionStatus() {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),

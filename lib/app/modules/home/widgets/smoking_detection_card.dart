@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
 
-/// Widget untuk menampilkan status deteksi merokok real-time dari YOLOv8
+// Widget displaying real-time smoking detection status from YOLOv8 model
 class SmokingDetectionCard extends GetView<HomeController> {
   const SmokingDetectionCard({super.key});
 
@@ -22,6 +22,7 @@ class SmokingDetectionCard extends GetView<HomeController> {
     );
   }
 
+  // Creates elevated card design with shadow for detection information
   BoxDecoration _buildCardDecoration() {
     return BoxDecoration(
       color: Colors.white,
@@ -36,6 +37,7 @@ class SmokingDetectionCard extends GetView<HomeController> {
     );
   }
 
+  // Builds header section with smoking icon and title
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -94,6 +96,7 @@ class SmokingDetectionCard extends GetView<HomeController> {
     );
   }
 
+  // Creates main detection status container with dynamic styling based on detection state
   Widget _buildDetectionStatus() {
     return Obx(() {
       final isDetected = controller.smokingDetected.value;
@@ -173,6 +176,7 @@ class SmokingDetectionCard extends GetView<HomeController> {
     });
   }
 
+  // Displays detection statistics including total count and last detection time
   Widget _buildStatistics() {
     return Obx(() => Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -231,6 +235,7 @@ class SmokingDetectionCard extends GetView<HomeController> {
     );
   }
 
+  // Formats last detection time string with fallback for empty values
   String _formatLastDetection() {
     final value = controller.lastDetectionTime.value;
     return value.isEmpty ? 'Belum ada' : value;
